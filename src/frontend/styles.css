@@ -1,0 +1,16 @@
+#credential-form {
+  margin: 2rem;
+}
+
+#values {
+  padding-left: 2rem;
+}
+
+#claimer-did {
+  display: inline-block;
+  vertical-align: bottom;
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
