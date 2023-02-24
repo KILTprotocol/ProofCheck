@@ -1,0 +1,41 @@
+on:
+  workflow_dispatch:
+    types: [ created ]
+  push:
+    branches:
+      - main
+
+name: Docker image
+
+jobs:
+  deploy:
+    name: Build image and publish it
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Build image
+      run: |
+        docker build -t kiltprotocol/proof-check:latest .
+
+    - name: Login to Docker Hub
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.REGISTRY_TOKEN }}
+      run: |
+        echo -n $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin docker.io
+
+    - name: Tag and push image
+      env:
+        REGISTRY: kiltprotocol
+        REPOSITORY: proof-check
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker tag kiltprotocol/proof-check $REGISTRY/$REPOSITORY:latest
+        docker tag kiltprotocol/proof-check $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker push $REGISTRY/$REPOSITORY:latest
+
