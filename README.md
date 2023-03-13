@@ -1,4 +1,4 @@
-# KILT Verifier Example
+# ProofCheck dApp: KILT Verifier Example 
 
 An example web application verifying the KILT credentials using the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api#verification-workflow)
 
