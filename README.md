@@ -2,6 +2,14 @@
 
 An example web application verifying the KILT credentials using the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api#verification-workflow)
 
+## Wallet
+
+The following steps assume that you already have a wallet which implements the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api), such as Sporran.
+
+[You can follow these steps to run Sporran in developer mode](https://github.com/BTE-Trusted-Entity/sporran-extension/blob/main/docs/external.md)
+
+You will also need a credential in your wallet (like the ones issued by [SocialKYC](https://socialkyc.io/)).
+
 ## Quick test
 
 The simplest way to try this out (if you know docker) is to start a pre-made docker container:
@@ -10,8 +18,7 @@ The simplest way to try this out (if you know docker) is to start a pre-made doc
 docker run -p 3000:3000 kiltprotocol/proof-check
 ```
 
-Once the container starts, access it on http://localhost:3000. You’ll need a conformant wallet (like [Sporran](https://www.sporran.org/)) and a credential (like the ones issued by [SocialKYC](https://socialkyc.io/)).
-
+Once the container starts, access it on http://localhost:3000
 
 ## Testing in developer mode
 
@@ -99,8 +106,7 @@ Neither you’re bound to Express on the backend implementation. (In fact, our o
 
 ### Production configuration
 
-By default, this example uses Peregrine, which is the testing instance of the KILT blockchain. Peregrine is not intended for real-world usage. The production instance of your verifier **must** work with the main KILT blockchain, called Spiritnet. Spiritnet does not share any data with Peregrine, so the DID you created on Peregrine will not exist on Spiritnet. You **should** generate a different set of mnemonics/keys for the production instance of your verifier. You will need to run the scripts again to create the DID and the domain linkage credential. To configure scripts to work with Spiritnet, change the value of `BLOCKCHAIN_ENDPOINT` from `wss://peregrine.kilt.io/parachain-public-ws` to `wss://kilt-rpc.dwellir.com`.
-
+By default, this example uses Peregrine, which is the testing instance of the KILT blockchain. Peregrine is not intended for real-world usage. The production instance of your verifier **must** work with the main KILT blockchain, called Spiritnet. Spiritnet does not share any data with Peregrine, so the DID you created on Peregrine will not exist on Spiritnet. You **should** generate a different set of mnemonics/keys for the production instance of your verifier. You will need to run the scripts again to create the DID and the domain linkage credential. To configure scripts to work with Spiritnet, change the value of `BLOCKCHAIN_ENDPOINT` from `wss://peregrine.kilt.io/parachain-public-ws` to `wss://kilt-rpc.dwellir.com`. You should also use the [public version of Sporran](https://www.sporran.org/) which connects to Spiritnet by default.
 
 ## Trust
 
