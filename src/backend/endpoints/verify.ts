@@ -1,14 +1,5 @@
-import type {
-  IAttestation,
-  ICredentialPresentation,
-} from '@kiltprotocol/sdk-js';
-import {
-  Attestation,
-  ConfigService,
-  Credential,
-  CType,
-  Message,
-} from '@kiltprotocol/sdk-js';
+import type { DidUri, ICredentialPresentation } from '@kiltprotocol/sdk-js';
+import { Credential, CType, Message } from '@kiltprotocol/sdk-js';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -23,7 +14,8 @@ import { paths } from './paths';
 interface Output {
   presentation: ICredentialPresentation;
   isAttested: boolean;
-  attestation?: IAttestation;
+  revoked?: boolean;
+  attester?: DidUri;
 }
 
 async function handler(request: Request, response: Response): Promise<void> {
@@ -55,31 +47,26 @@ async function handler(request: Request, response: Response): Promise<void> {
 
     const presentation = messageBody.content[0];
     try {
-      await Credential.verifyPresentation(presentation, { challenge });
-
-      const api = ConfigService.get('api');
-      const attestation = Attestation.fromChain(
-        await api.query.attestation.attestations(presentation.rootHash),
-        presentation.rootHash,
+      const { revoked, attester, claim } = await Credential.verifyPresentation(
+        presentation,
+        { challenge },
       );
 
-      const isAttested =
-        !attestation.revoked &&
-        attestation.cTypeHash === presentation.claim.cTypeHash;
+      const isAttested = !revoked;
 
-      if (!trustedAttesters.includes(attestation.owner)) {
+      if (!trustedAttesters.includes(attester)) {
         response
           .status(StatusCodes.FORBIDDEN)
           .send('Not an attester we requested');
         return;
       }
 
-      if (!socialCTypeIds.includes(CType.hashToId(attestation.cTypeHash))) {
+      if (!socialCTypeIds.includes(CType.hashToId(claim.cTypeHash))) {
         response.status(StatusCodes.FORBIDDEN).send('Not a CType we requested');
         return;
       }
 
-      response.send({ presentation, isAttested, attestation } as Output);
+      response.send({ presentation, isAttested, attester, revoked } as Output);
     } catch {
       response.send({ presentation, isAttested: false } as Output);
     } finally {
