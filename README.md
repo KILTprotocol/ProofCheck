@@ -18,7 +18,7 @@ The simplest way to try this out (if you know docker) is to start a pre-made doc
 docker run -p 3000:3000 kiltprotocol/proof-check
 ```
 
-Once the container starts, access it on http://localhost:3000
+Once the container starts, access it on http://localhost:3000.
 
 ## Testing in developer mode
 
