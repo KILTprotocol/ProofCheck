@@ -1,5 +1,5 @@
 import type {
-  IAttestation,
+  DidUri,
   ICredentialPresentation,
   IEncryptedMessage,
 } from '@kiltprotocol/sdk-js';
@@ -34,7 +34,8 @@ function App() {
   const [error, setError] = useState<'closed' | 'rejected' | 'unknown'>();
 
   const [presentation, setPresentation] = useState<ICredentialPresentation>();
-  const [attestation, setAttestation] = useState<IAttestation>();
+  const [attester, setAttester] = useState<DidUri>();
+  const [revoked, setRevoked] = useState<boolean>();
   const [isAttested, setIsAttested] = useState<boolean>(false);
 
   const { kilt } = apiWindow;
@@ -69,12 +70,14 @@ function App() {
           const result: {
             presentation: ICredentialPresentation;
             isAttested: boolean;
-            attestation?: IAttestation;
+            revoked?: boolean;
+            attester?: DidUri;
             // decrypt the message and verify credential in the backend:
           } = await ky.post(paths.verify, { headers, json: message }).json();
 
           setPresentation(result.presentation);
-          setAttestation(result.attestation);
+          setAttester(result.attester);
+          setRevoked(result.revoked);
           setIsAttested(result.isAttested);
         });
 
@@ -133,11 +136,11 @@ function App() {
 
       {processing && <p>Connecting…</p>}
 
-      {presentation && !isAttested && attestation?.revoked && (
+      {presentation && !isAttested && revoked && (
         <h3>❌ You’ve shared a revoked credential</h3>
       )}
 
-      {presentation && !isAttested && !attestation?.revoked && (
+      {presentation && !isAttested && !revoked && (
         <h3>❓ You’ve shared a not yet attested credential</h3>
       )}
 
@@ -156,7 +159,7 @@ function App() {
           <summary>Credential details 🔍</summary>
 
           <h4>Attester:</h4>
-          <p>SocialKYC ✅ ({attestation?.owner})</p>
+          <p>SocialKYC ✅ ({attester})</p>
 
           <h4>Your DID:</h4>
           <p>✅ {presentation.claim.owner}</p>

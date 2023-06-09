@@ -1,14 +1,5 @@
-import type {
-  IAttestation,
-  ICredentialPresentation,
-} from '@kiltprotocol/sdk-js';
-import {
-  Attestation,
-  ConfigService,
-  Credential,
-  CType,
-  Message,
-} from '@kiltprotocol/sdk-js';
+import type { DidUri, ICredentialPresentation } from '@kiltprotocol/sdk-js';
+import { Credential, CType, Message } from '@kiltprotocol/sdk-js';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -16,14 +7,15 @@ import { Session, sessionMiddleware } from '../utilities/sessionStorage';
 import { logger } from '../utilities/logger';
 import { decrypt } from '../utilities/cryptoCallbacks';
 import { trustedAttesters } from '../utilities/trustedAttesters';
-import { socialCTypeIds } from '../utilities/supportedCType';
+import { socialCTypeIds, supportedCTypes } from '../utilities/supportedCType';
 
 import { paths } from './paths';
 
 interface Output {
   presentation: ICredentialPresentation;
   isAttested: boolean;
-  attestation?: IAttestation;
+  revoked?: boolean;
+  attester?: DidUri;
 }
 
 async function handler(request: Request, response: Response): Promise<void> {
@@ -55,31 +47,34 @@ async function handler(request: Request, response: Response): Promise<void> {
 
     const presentation = messageBody.content[0];
     try {
-      await Credential.verifyPresentation(presentation, { challenge });
+      const cTypeId = CType.hashToId(presentation.claim.cTypeHash);
+      if (!socialCTypeIds.includes(cTypeId)) {
+        response.status(StatusCodes.FORBIDDEN).send('Not a CType we requested');
+        return;
+      }
 
-      const api = ConfigService.get('api');
-      const attestation = Attestation.fromChain(
-        await api.query.attestation.attestations(presentation.rootHash),
-        presentation.rootHash,
+      const ctype = Object.values(supportedCTypes).find(
+        ({ $id }) => $id === cTypeId,
       );
 
-      const isAttested =
-        !attestation.revoked &&
-        attestation.cTypeHash === presentation.claim.cTypeHash;
+      const { revoked, attester } = await Credential.verifyPresentation(
+        presentation,
+        {
+          ctype,
+          challenge,
+        },
+      );
 
-      if (!trustedAttesters.includes(attestation.owner)) {
+      const isAttested = !revoked;
+
+      if (!trustedAttesters.includes(attester)) {
         response
           .status(StatusCodes.FORBIDDEN)
           .send('Not an attester we requested');
         return;
       }
 
-      if (!socialCTypeIds.includes(CType.hashToId(attestation.cTypeHash))) {
-        response.status(StatusCodes.FORBIDDEN).send('Not a CType we requested');
-        return;
-      }
-
-      response.send({ presentation, isAttested, attestation } as Output);
+      response.send({ presentation, isAttested, attester, revoked } as Output);
     } catch {
       response.send({ presentation, isAttested: false } as Output);
     } finally {
