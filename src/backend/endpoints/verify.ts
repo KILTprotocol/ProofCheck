@@ -7,7 +7,7 @@ import { Session, sessionMiddleware } from '../utilities/sessionStorage';
 import { logger } from '../utilities/logger';
 import { decrypt } from '../utilities/cryptoCallbacks';
 import { trustedAttesters } from '../utilities/trustedAttesters';
-import { socialCTypeIds } from '../utilities/supportedCType';
+import { socialCTypeIds, supportedCTypes } from '../utilities/supportedCType';
 
 import { paths } from './paths';
 
@@ -47,9 +47,22 @@ async function handler(request: Request, response: Response): Promise<void> {
 
     const presentation = messageBody.content[0];
     try {
-      const { revoked, attester, claim } = await Credential.verifyPresentation(
+      const cTypeId = CType.hashToId(presentation.claim.cTypeHash);
+      if (!socialCTypeIds.includes(cTypeId)) {
+        response.status(StatusCodes.FORBIDDEN).send('Not a CType we requested');
+        return;
+      }
+
+      const ctype = Object.values(supportedCTypes).find(
+        ({ $id }) => $id === cTypeId,
+      );
+
+      const { revoked, attester } = await Credential.verifyPresentation(
         presentation,
-        { challenge },
+        {
+          ctype,
+          challenge,
+        },
       );
 
       const isAttested = !revoked;
@@ -58,11 +71,6 @@ async function handler(request: Request, response: Response): Promise<void> {
         response
           .status(StatusCodes.FORBIDDEN)
           .send('Not an attester we requested');
-        return;
-      }
-
-      if (!socialCTypeIds.includes(CType.hashToId(claim.cTypeHash))) {
-        response.status(StatusCodes.FORBIDDEN).send('Not a CType we requested');
         return;
       }
 
