@@ -6,9 +6,9 @@
     "node": ">= v18.12.1"
   },
   "scripts": {
-    "prettify": "prettier --write \"src/**/*.ts*\"",
+    "prettify": "prettier --write \"src/**/*.js*\"",
     "lint": "yarn run lint-css && yarn run lint-js",
-    "lint-js": "eslint --max-warnings 0 --config ./.eslintrc.json \"src/**/*.ts*\"",
+    "lint-js": "eslint --max-warnings 0 --config ./.eslintrc.json \"src/**/*.js*\"",
     "lint-css": "stylelint --max-warnings 0 --fix \"src/**/*.css\"",
     "did-create": "node --enable-source-maps dist/backend/createDID.js",
     "did-configuration": "node --enable-source-maps dist/backend/createDIDConfiguration.js",
@@ -69,9 +69,9 @@
     "backend": {
       "context": "node",
       "source": [
-        "src/backend/server.ts",
-        "src/backend/createDID.ts",
-        "src/backend/createDIDConfiguration.ts"
+        "src/backend/server.js",
+        "src/backend/createDID.js",
+        "src/backend/createDIDConfiguration.js"
       ],
       "distDir": "dist/backend",
       "outputFormat": "esmodule"

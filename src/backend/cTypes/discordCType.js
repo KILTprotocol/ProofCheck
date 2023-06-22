@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const discordCType: ICType = {
+export const discordCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'Discord',
   properties: {

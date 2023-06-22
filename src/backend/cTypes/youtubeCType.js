@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const youtubeCType: ICType = {
+export const youtubeCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'YoutubeChannel',
   properties: {

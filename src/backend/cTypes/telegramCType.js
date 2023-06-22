@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const telegramCType: ICType = {
+export const telegramCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'Telegram',
   properties: {

@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const domainLinkageCType: ICType = {
+export const domainLinkageCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'Domain Linkage Credential',
   properties: {

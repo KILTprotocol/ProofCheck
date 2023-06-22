@@ -1,91 +1,66 @@
-import type {
-  DidUri,
-  ICredentialPresentation,
-  IEncryptedMessage,
-} from '@kiltprotocol/sdk-js';
-
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import ky from 'ky';
-
 import {
   socialCTypeIds,
   supportedCTypes,
 } from '../backend/utilities/supportedCType';
 import { sessionHeader } from '../backend/endpoints/sessionHeader';
 import { paths } from '../backend/endpoints/paths';
-
 import {
   apiWindow,
   getCompatibleExtensions,
   getSession,
 } from './utilities/session';
 import { exceptionToError } from './utilities/exceptionToError';
-
-const cTypes: Record<string, string> = Object.fromEntries(
+const cTypes = Object.fromEntries(
   Object.values(supportedCTypes).map(({ title, $id }) => [
     $id.replace('kilt:ctype:', ''),
     title,
   ]),
 );
-
 function App() {
   const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<'closed' | 'rejected' | 'unknown'>();
-
-  const [presentation, setPresentation] = useState<ICredentialPresentation>();
-  const [attester, setAttester] = useState<DidUri>();
-  const [revoked, setRevoked] = useState<boolean>();
-  const [isAttested, setIsAttested] = useState<boolean>(false);
-
+  const [error, setError] = useState();
+  const [presentation, setPresentation] = useState();
+  const [attester, setAttester] = useState();
+  const [revoked, setRevoked] = useState();
+  const [isAttested, setIsAttested] = useState(false);
   const { kilt } = apiWindow;
-
   const [extensions, setExtensions] = useState(getCompatibleExtensions());
   useEffect(() => {
     function handler() {
       setExtensions(getCompatibleExtensions());
     }
-
     window.dispatchEvent(new CustomEvent('kilt-dapp#initialized'));
     window.addEventListener('kilt-extension#initialized', handler);
     return () =>
       window.removeEventListener('kilt-extension#initialized', handler);
   }, []);
-
   const handleClick = useCallback(
-    async (extension: string) => {
+    async (extension) => {
       try {
         setPresentation(undefined);
         setProcessing(true);
         setError(undefined);
-
         const session = await getSession(kilt[extension]);
         setProcessing(false);
-
         const { sessionId } = session;
         const headers = { [sessionHeader]: sessionId };
-
         // define in advance how to handle the response from the extension
         await session.listen(async (message) => {
-          const result: {
-            presentation: ICredentialPresentation;
-            isAttested: boolean;
-            revoked?: boolean;
-            attester?: DidUri;
-            // decrypt the message and verify credential in the backend:
-          } = await ky.post(paths.verify, { headers, json: message }).json();
-
+          const result = await ky
+            .post(paths.verify, { headers, json: message })
+            .json();
           setPresentation(result.presentation);
           setAttester(result.attester);
           setRevoked(result.revoked);
           setIsAttested(result.isAttested);
         });
-
         // encrypt message on the backend
-        const message: IEncryptedMessage = await ky
+        const message = await ky
           .post(paths.requestCredential, { headers, json: socialCTypeIds })
           .json();
-
         // forward the encrypted message to the extension
         await session.send(message);
       } catch (exception) {
@@ -103,9 +78,7 @@ function App() {
     },
     [kilt],
   );
-
   const contents = presentation && Object.entries(presentation.claim.contents);
-
   return (
     <section>
       <h1>ProofCheck</h1>
@@ -206,6 +179,5 @@ function App() {
     </section>
   );
 }
-
-const root = createRoot(document.querySelector('#app') as HTMLElement);
+const root = createRoot(document.querySelector('#app'));
 root.render(<App />);

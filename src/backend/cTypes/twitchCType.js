@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const twitchCType: ICType = {
+export const twitchCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'Twitch',
   properties: {

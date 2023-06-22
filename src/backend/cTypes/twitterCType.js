@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const twitterCType: ICType = {
+export const twitterCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'Twitter',
   properties: {

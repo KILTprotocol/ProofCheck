@@ -1,6 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
-
-export const githubCType: ICType = {
+export const githubCType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
   title: 'GitHub',
   properties: {
