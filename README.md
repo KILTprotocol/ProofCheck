@@ -52,11 +52,16 @@ yarn dev-start
 
 ## Rolling your own verifier
 
+### Real coins and testing coins
+
+The KILT blockchain with real coins and real attestations is called Spiritnet. This example by default uses a testing blockchain called Peregrine, [more details on this below](#production-configuration). This documentation uses the term “coins” to refer to the coins on both blockchains.
+
+
 ### One-time steps
 
 Some steps only need to be done once. Those scripts do not have to be a part of your application, and you can run them inside this repository. You have first to perform the steps above to build the code.
 
-The first thing your verifier will need is some KILT coins on a payer KILT account. They will be needed to pay for storing on the blockchain its own DID with several keys. The account and each key will be defined by a secret 12-words mnemonic. A mnemonic can be generated using this command:
+The first thing your verifier will need is some coins on a payer blockchain account. They will be needed to pay for storing on the blockchain the verifier’s DID with several keys. The account and each key will be defined by a secret 12-words mnemonic. A mnemonic can be generated using this command:
 
 ```shell
 node -e "console.log(require('@polkadot/util-crypto').mnemonicGenerate())"
