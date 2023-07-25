@@ -8,7 +8,7 @@ The following steps assume that you already have a wallet which implements the [
 
 One such wallet is Sporran. [You can follow these steps to run a test version of Sporran](https://github.com/BTE-Trusted-Entity/sporran-extension/blob/main/docs/external.md).
 
-You will also need a credential anchored on Peregrine (like the ones issued by [a test version of SocialKYC](https://test.socialkyc.io/)).
+You will also need a credential anchored on Peregrine (like the ones issued by [the test version of SocialKYC](https://test.socialkyc.io/)).
 
 ## Quick test
 
