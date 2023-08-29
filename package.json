@@ -9,7 +9,7 @@
     "prettify": "prettier --write \"src/**/*.ts*\"",
     "lint": "yarn run lint-css && yarn run lint-js",
     "lint-js": "eslint --max-warnings 0 --config ./.eslintrc.json \"src/**/*.ts*\"",
-    "lint-css": "stylelint --max-warnings 0 --fix \"src/**/*.css\"",
+    "lint-css": "stylelint --max-warnings 0 \"src/**/*.css\"",
     "did-create": "node --enable-source-maps dist/backend/createDID.js",
     "did-configuration": "node --enable-source-maps dist/backend/createDIDConfiguration.js",
     "commonjs": "mkdir -p dist && echo '{\"type\":\"commonjs\"}' > dist/package.json",
