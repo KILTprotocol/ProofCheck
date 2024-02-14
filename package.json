@@ -77,5 +77,5 @@
       "outputFormat": "esmodule"
     }
   },
-  "packageManager": "yarn@4.0.1"
+  "packageManager": "yarn@4.1.0"
 }
