@@ -7,6 +7,9 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3
 
+      - name: enable corepack
+        run: corepack enable
+
       - name: Configure Node and package manager
         uses: actions/setup-node@v3.6.0
         with:
