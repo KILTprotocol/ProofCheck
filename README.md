@@ -6,7 +6,7 @@ An example web application verifying the KILT credentials using the [KILT Creden
 
 The following steps assume that you already have a wallet which implements the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api) and is connected to the testing Peregrine blockchain.
 
-One such wallet is Sporran. [You can follow these steps to run a test version of Sporran](https://github.com/BTE-Trusted-Entity/sporran-extension/blob/main/docs/external.md).
+One such wallet is Sporran. [You can follow these steps to run a test version of Sporran](https://github.com/KILT-Foundation/sporran-extension/blob/main/docs/external.md).
 
 You will also need a credential anchored on Peregrine (like the ones issued by [the test version of SocialKYC](https://test.socialkyc.io/)).
 
